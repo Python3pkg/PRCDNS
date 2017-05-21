@@ -34,7 +34,7 @@ class DNSServerProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         self.peername = transport.get_extra_info('peername')
         if self.args.debug:
-            print('Connection from {}'.format(self.peername))
+            print(('Connection from {}'.format(self.peername)))
         self.transport = transport
 
     def data_received(self, data):
@@ -44,7 +44,7 @@ class DNSServerProtocol(asyncio.Protocol):
             return
         self.request = DNSRecord.parse(data)
         if self.args.debug:
-            print('Data received: {!r}'.format(self.request))
+            print(('Data received: {!r}'.format(self.request)))
 
         from IPy import IP
         ip = IP(self.peername[0])
@@ -64,7 +64,7 @@ class DNSServerProtocol(asyncio.Protocol):
         google_dns_resp = fut.result()
         # google_dns_resp = '{"Status": 0,"TC": false,"RD": true,"RA": true,"AD": false,"CD": false,"Question":[ {"name": "img.alicdn.com.","type": 1}],"Answer":[ {"name": "img.alicdn.com.","type": 5,"TTL": 21557,"data": "img.alicdn.com.danuoyi.alicdn.com."},{"name": "img.alicdn.com.danuoyi.alicdn.com.","type": 1,"TTL": 59,"data": "111.32.130.109"},{"name": "img.alicdn.com.danuoyi.alicdn.com.","type": 1,"TTL": 59,"data": "111.32.130.108"}],"Additional":[],"edns_client_subnet": "223.72.90.0/24","Comment": "Response from danuoyinewns1.gds.alicdn.com.(121.43.18.33)"}'
         if self.args.debug:
-            print('from: {};response: {}'.format(self.peername[0], google_dns_resp))
+            print(('from: {};response: {}'.format(self.peername[0], google_dns_resp)))
         resp = json.loads(google_dns_resp)
         a = self.request.reply()
         if resp['Status'] == 0 and 'Answer' in resp:
@@ -81,7 +81,7 @@ class DNSServerProtocol(asyncio.Protocol):
             self.transport.close()
             return
         if self.args.debug:
-            print('Send: {!r}'.format(a))
+            print(('Send: {!r}'.format(a)))
         b_resp = a.pack()
         b_resp = struct.pack(">H", b_resp.__len__()) + b_resp
         self.transport.write(b_resp)
@@ -120,8 +120,8 @@ def main():
     server = loop.run_until_complete(coro)
 
     try:
-        print("public ip is {}".format(myip))
-        print("listen on {0}:{1}".format(args.listen, args.port))
+        print(("public ip is {}".format(myip)))
+        print(("listen on {0}:{1}".format(args.listen, args.port)))
         loop.run_forever()
     except KeyboardInterrupt:
         pass
